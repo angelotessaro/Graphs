@@ -41,11 +41,7 @@
 
 		if ($lFormSubmitted){
 			
-	    	switch ($lUploadDirectoryFlag){
-	    		case "CLIENT_DECIDES": $lTempDirectory = $_REQUEST["UPLOAD_DIRECTORY"];break;
-				case "WEB_SERVER": $lTempDirectory = $lWebServerUploadDirectory;break;
-				case "TEMP_DIRECTORY": $lTempDirectory = sys_get_temp_dir();break;
-	    	}// end switch
+			$lTempDirectory = sys_get_temp_dir();
 			
 			/* Common file properties */
 			$lFilename = $_FILES["filename"]["name"];
@@ -76,36 +72,35 @@
 				$lAllowedFileSizeString = number_format($lAllowedFileSize). " Bytes";
 			}//end if
 
-			$lFileUploadMessage = "File uploaded to {$lFileTempName}";
+			$lFileUploadMessage = "File uploaded to secret folder";
 			if ($lFileUploadErrorCode != UPLOAD_ERR_OK) {
 				$lFileUploadMessage = "Error detected during file upload (Code {$lFileUploadErrorCode}). See error output for detail.";
 				throw new FileUploadExceptionHandler($lFileUploadErrorCode);
 			}//end if UPLOAD_ERR_OK
 			
 			$lFileValid = TRUE;
-			if ($lValidateFileUpload){
-				$lValidationMessage = "Validation performed.";
-				
-				if (!in_array($lFileExtension, $lAllowedFileExtensions)) {
-					$lValidationMessage .= " File extension {$lFileExtension} not allowed.";
-					$lFileValid = FALSE;
-				}// end if
 
-				if (!in_array($lFileType, $lAllowedFileTypes)) {
-					$lValidationMessage .= " File type {$lFileType} not allowed.";
-					$lFileValid = FALSE;
-				}// end if
-	
-				if ($lFileSize > $lAllowedFileSize){
-					$lValidationMessage .= "File size {$lFileSizeString} exceeds allowed file size {$lAllowedFileSizeString}.";
-					$lFileValid = FALSE;
-				}// end if
-			}// end if $lValidateFileUpload
+			$lValidationMessage = "Validation performed.";
 			
+			if (!in_array($lFileExtension, $lAllowedFileExtensions)) {
+				$lValidationMessage .= " File extension {$lFileExtension} not allowed.";
+				$lFileValid = FALSE;
+			}// end if
+
+			if (!in_array($lFileType, $lAllowedFileTypes)) {
+				$lValidationMessage .= " File type {$lFileType} not allowed.";
+				$lFileValid = FALSE;
+			}// end if
+
+			if ($lFileSize > $lAllowedFileSize){
+				$lValidationMessage .= "File size {$lFileSizeString} exceeds allowed file size {$lAllowedFileSizeString}.";
+				$lFileValid = FALSE;
+			}// end if
+
 			if ($lFileValid){
 				if (move_uploaded_file($lFileTempName, $lFilePermanentName)) {
 					$lFileMovedSuccessfully = TRUE;
-					$lFileMovedMessage = "File moved to {$lFilePermanentName}";
+					$lFileMovedMessage = "File moved to a permanent folder";
 				}else{
 					$lFileMovedSuccessfully = FALSE;
 					$lFileMovedMessage = "Error Detected. Unable to move PHP temp file {$lTempDirectory} to permanent location {$lFilePermanentName}";
@@ -161,8 +156,6 @@
 					<tr><td class='label' colspan='2'>{$lValidationMessage}</td></tr>
 					<tr><td>&nbsp;</td></tr>
 					<tr><td class='label'>Original File Name</td><td>{$lFilename}</td></tr>
-					<tr><td class='label'>Temporary File Name</td><td>{$lFileTempName}</td></tr>
-					<tr><td class='label'>Permanent File Name</td><td>{$lFilePermanentName}</td></tr>
 					<tr><td class='label'>File Type</td><td>{$lFileType}</td></tr>
 					<tr><td class='label'>File Size</td><td>{$lFileSizeString}</td></tr>
 				</table>	
