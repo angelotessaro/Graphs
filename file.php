@@ -16,18 +16,17 @@
 	require_once (__ROOT__.'/classes/RemoteFileHandler.php');
 	require_once (__ROOT__.'/classes/RequiredSoftwareHandler.php');
 
-/* ------------------------------------------
+    /* ------------------------------------------
      * INITIALIZE SESSION
      * ------------------------------------------ */
 	if (session_status() == PHP_SESSION_NONE){
 	    session_start();
 	}// end if
 
-	if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS']!="on"){
-		require_once('ssl-enforced.php');
-		exit();
-	}//end if
-	
+	if (!isset($_SESSION["security-level"])){
+	    $_SESSION["security-level"] = 0;
+	}// end if
+
     /* ----------------------------------------------------
      * ENFORCE SSL
      * ----------------------------------------------------
