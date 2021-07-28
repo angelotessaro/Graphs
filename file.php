@@ -27,6 +27,11 @@
 	    $_SESSION["security-level"] = 0;
 	}// end if
 
+	if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS']!="on"){
+		require_once('ssl-enforced.php');
+		exit();
+	}//end if
+
     /* ----------------------------------------------------
      * ENFORCE SSL
      * ----------------------------------------------------
